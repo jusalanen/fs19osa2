@@ -29,11 +29,11 @@ const Content = ( {parts} ) => {
 }
 
 const Total = ( {parts} ) => {
-  const reducer = (tot, part) => tot + part.exercises
-  let total = parts.reduce(reducer, 0)
+  const reducer = (total, part) => total + part.exercises
+  let tot = parts.reduce(reducer, 0)
   return (
     <div>
-      <b>total of {total} exercises</b>
+      <b>total of {tot} exercises</b>
     </div>
   )
 }
