@@ -7,7 +7,7 @@ const FilteredPersons = (props) => {
   const filtered = persons.filter( person =>
     person.name.toLowerCase().includes(filter.toLowerCase()))
   return <div>
-    {filtered.map( person => <div>
+    {filtered.map( person => <div key={person.name}>
     <Person person={person} /></div>)}
   </div>
 }
