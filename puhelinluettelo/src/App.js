@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from 'react'
 import Phonebook from './components/Phonebook'
-import axios from 'axios'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
+import personService from './services/persons'
 
 const App = () => {
   const [ persons, setPersons ] = useState([]) 
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber] = useState('')
   const [ filter, setFilter ] = useState('')
-  const baseUrl = 'http://localhost:3001/persons'
+
 
   const hook = () => {
     console.log('effect')
-    axios
-      .get(baseUrl)
-      .then(response => {
+    personService
+      .getAll()
+      .then( response => {
         console.log('promise fulfilled')
-        setPersons(response.data)
+        setPersons(response)
       })
   }
   
@@ -35,10 +35,10 @@ const App = () => {
         name: newName,
         number: newNumber
       }
-      axios
-        .post(baseUrl, personObject)
+      personService
+        .create(personObject)
         .then( response => {
-          setPersons(persons.concat(response.data))
+          setPersons(persons.concat(response))
         })     
       setNewName('')
       setNewNumber('')
