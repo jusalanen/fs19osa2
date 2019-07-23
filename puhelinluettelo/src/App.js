@@ -9,11 +9,12 @@ const App = () => {
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber] = useState('')
   const [ filter, setFilter ] = useState('')
+  const baseUrl = 'http://localhost:3001/persons'
 
   const hook = () => {
     console.log('effect')
     axios
-      .get('http://localhost:3001/persons')
+      .get(baseUrl)
       .then(response => {
         console.log('promise fulfilled')
         setPersons(response.data)
@@ -25,7 +26,7 @@ const App = () => {
   const addNameNumber = (event) => {
     event.preventDefault()
     const names = []
-    persons.map( person => names.push(person.name))
+    persons.map( person => names.push(person.name) )
     if (names.includes(newName)) {
       window.alert(newName + ' is already included in Phonebook. Give another name')
       setNewName('')
@@ -34,7 +35,11 @@ const App = () => {
         name: newName,
         number: newNumber
       }
-      setPersons(persons.concat(personObject))
+      axios
+        .post(baseUrl, personObject)
+        .then( response => {
+          setPersons(persons.concat(response.data))
+        })     
       setNewName('')
       setNewNumber('')
     }
