@@ -45,6 +45,17 @@ const App = () => {
     }
   }
 
+  const handleDelete = (personId) => {
+    personService
+      .remove(personId)
+      .then( () => {
+        personService.getAll()
+        .then( response => {
+          setPersons(response)
+        })
+      })
+  }
+
   const handleNameChange = (event) => {
     setNewName(event.target.value)
   }
@@ -59,14 +70,14 @@ const App = () => {
 
   return (
     <div>
-      <h2>Phonebook</h2>
+      <h1>Phonebook</h1>
       <Filter filter={filter} handleFilterChange={handleFilterChange} />
       <PersonForm addNameNumber = {addNameNumber}
                 newName = {newName}
                 handleNameChange = {handleNameChange}
                 newNumber = {newNumber}
                 handleNumberChange = {handleNumberChange} />
-      <Phonebook persons={persons} filter={filter} />
+      <Phonebook persons={persons} filter={filter} handleDelete={handleDelete} />
     </div>
   )
 
