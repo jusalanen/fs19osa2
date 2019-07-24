@@ -17,6 +17,7 @@ const App = () => {
       .getAll()
       .then( response => {
         console.log('promise fulfilled')
+        console.log(response)
         setPersons(response)
       })
   }
@@ -27,9 +28,29 @@ const App = () => {
     event.preventDefault()
     const names = []
     persons.map( person => names.push(person.name) )
-    if (names.includes(newName)) {
-      window.alert(newName + ' is already included in Phonebook. Give another name')
+    if (names.includes(newName)) {  
+      persons.forEach((person) => {
+        if (person.name === newName) {
+          if (window.confirm(newName + ' is already included in Phonebook. Replace the old number with a new one ?')) {
+            const changedPerson = {
+              name: person.name,
+              number: newNumber,
+              id: person.id
+            }
+            personService
+            .update(person.id, changedPerson)
+            .then( (response) => {
+              console.log(response)
+              personService.getAll()
+              .then( response => {
+                setPersons(response)
+              })
+            })
+          }
+        }
+      })
       setNewName('')
+      setNewNumber('')
     } else {
       const personObject = {
         name: newName,
