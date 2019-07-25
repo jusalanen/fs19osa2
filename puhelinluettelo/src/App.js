@@ -4,6 +4,7 @@ import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import personService from './services/persons'
 import Notification from './components/Notification'
+import ErrorMessage from './components/ErrorMessage'
 
 const App = () => {
   const [ persons, setPersons ] = useState([]) 
@@ -11,6 +12,7 @@ const App = () => {
   const [ newNumber, setNewNumber] = useState('')
   const [ filter, setFilter ] = useState('')
   const [ message, setMessage ] = useState(null)
+  const [ errMessage, setErrMessage ] = useState(null)
 
 
   const hook = () => {
@@ -41,25 +43,31 @@ const App = () => {
             }
             personService
             .update(person.id, changedPerson)
-            .then( (response) => {
-              console.log(response)
-              personService.getAll()
-              .then( response => {
-                setPersons(response)
-              })
-            })
-            setNewName('')
-            setNewNumber('')
-            setMessage(
+            .then( (updPerson) => {
+              console.log(updPerson)
+              setPersons(persons.map(pers => pers.id !== updPerson.id ? pers : updPerson))             
+              setMessage(
               `Number of '${person.name}' changed to '${person.number}'`
-            )
-            setTimeout(() => {
-              setMessage(null)
-            }, 5000) 
+              )
+              setTimeout(() => {
+                setMessage(null)
+              }, 5000)
+              setNewName('')
+              setNewNumber('')
+            }).catch(error => {
+              console.log(error)
+              setErrMessage(
+                `'${person.name}' was already removed from server`
+              )
+              setTimeout(() => {
+                setErrMessage(null)
+              }, 5000)
+              setNewName('')
+              setNewNumber('')
+            })
           }
         }
-      })
-      
+      })      
     } else {
       const personObject = {
         name: newName,
@@ -70,14 +78,14 @@ const App = () => {
         .then( response => {
           setPersons(persons.concat(response))
         })     
-      setNewName('')
-      setNewNumber('')
       setMessage(
         `'${personObject.name}' added to Phonebook`
       )
       setTimeout(() => {
         setMessage(null)
       }, 5000)
+      setNewName('')
+      setNewNumber('')
     }
   }
 
@@ -120,6 +128,7 @@ const App = () => {
     <div>
       <h1>Phonebook</h1>
       <Notification message={message} />
+      <ErrorMessage message={errMessage} />
       <Filter filter={filter} handleFilterChange={handleFilterChange} />
       <PersonForm addNameNumber = {addNameNumber}
                 newName = {newName}
