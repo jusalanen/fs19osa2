@@ -3,12 +3,14 @@ import Phonebook from './components/Phonebook'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import personService from './services/persons'
+import Notification from './components/Notification'
 
 const App = () => {
   const [ persons, setPersons ] = useState([]) 
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber] = useState('')
   const [ filter, setFilter ] = useState('')
+  const [ message, setMessage ] = useState(null)
 
 
   const hook = () => {
@@ -46,11 +48,18 @@ const App = () => {
                 setPersons(response)
               })
             })
+            setNewName('')
+            setNewNumber('')
+            setMessage(
+              `Number of '${person.name}' changed to '${person.number}'`
+            )
+            setTimeout(() => {
+              setMessage(null)
+            }, 5000) 
           }
         }
       })
-      setNewName('')
-      setNewNumber('')
+      
     } else {
       const personObject = {
         name: newName,
@@ -63,10 +72,22 @@ const App = () => {
         })     
       setNewName('')
       setNewNumber('')
+      setMessage(
+        `'${personObject.name}' added to Phonebook`
+      )
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
     }
   }
 
   const handleDelete = (personId) => {
+    let delPerson = null
+    persons.forEach( person => {
+      if (person.id === personId)  {
+        delPerson = person
+      }
+    })
     personService
       .remove(personId)
       .then( () => {
@@ -75,6 +96,12 @@ const App = () => {
           setPersons(response)
         })
       })
+      setMessage(
+        `'${delPerson.name}' deleted from Phonebook`
+      )
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
   }
 
   const handleNameChange = (event) => {
@@ -92,6 +119,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
+      <Notification message={message} />
       <Filter filter={filter} handleFilterChange={handleFilterChange} />
       <PersonForm addNameNumber = {addNameNumber}
                 newName = {newName}
