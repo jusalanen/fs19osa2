@@ -47,7 +47,7 @@ const App = () => {
               console.log(updPerson)
               setPersons(persons.map(pers => pers.id !== updPerson.id ? pers : updPerson))             
               setMessage(
-              `Number of '${person.name}' changed to '${person.number}'`
+              `Number of '${person.name}' changed to '${updPerson.number}'`
               )
               setTimeout(() => {
                 setMessage(null)
